@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "name": {
+      "type": "text"
+    },
+    "brand": {
+      "type": "keyword"
+    },
+    "price": {
+      "type": "integer"
+    },
+    "thumbnail_url": {
+      "type": "text"
+    },
+    "trim": {
+      "type": "text"
+    },
+    "car_type": {
+      "type": "keyword"
+    }
+  }
+}
