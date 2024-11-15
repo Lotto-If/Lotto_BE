@@ -1,29 +1,35 @@
 spring:
+  application:
+    name: lotto
+  elastic:
+    url: 116.37.91.221:9200
   datasource:
+    url: jdbc:mysql://116.37.91.221:3306/lotto?useSSL=false&serverTimezone=Asia/Seoul&useUnicode=true&characterEncoding=UTF-8
+    username: niscom
+    password: niscom
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/lotto?serverTimezone=Asia/Seoul&Unicode=true&character_set_server=utf8mb4
-    username: root
-    password: 1234
-
+  mvc:
+    favicon:
+      enabled: false
   jpa:
     open-in-view: true
     hibernate:
       ddl-auto: update
-      naming:
-        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
-        use-new-id-generator-mappings: false
     show-sql: true
     properties:
       hibernate.format_sql: true
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
-    defer-datasource-initialization: true # init.sql
-  profiles:
-    include: secret
+    defer-datasource-initialization: false
+
   sql:
     init:
-      mode: always
+      mode: always # 초기화 스크립트 사용 여부
 
 logging:
   level:
     org.hibernate.SQL: debug
+    org.hibernate.type.descriptor.sql: trace # SQL 파라미터까지 출력
     org.springframework.web: DEBUG
+
+server:
+  port: 8080
