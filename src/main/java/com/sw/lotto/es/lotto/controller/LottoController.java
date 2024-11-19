@@ -5,10 +5,8 @@ import com.sw.lotto.es.lotto.model.LottoDocument;
 import com.sw.lotto.es.lotto.service.LottoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/lotto")
@@ -19,11 +17,11 @@ public class LottoController extends CommonController {
     private LottoService lottoService;
 
     @GetMapping("/list")
-    public ResponseEntity<List<LottoDocument>> getLottoList(
-            @RequestParam(value = "sortBy", required = false) String sortBy) {
-        List<LottoDocument> lottoList = lottoService.getLottoList(sortBy);
-        return ResponseEntity.ok(lottoList);
+    public Page<LottoDocument> getAllLotto(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "round") String sortBy) {
+        return lottoService.getLottoList(page, size, sortBy);
     }
-
 
 }

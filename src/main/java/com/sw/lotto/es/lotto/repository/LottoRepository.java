@@ -6,5 +6,4 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LottoRepository extends ElasticsearchRepository<LottoDocument, String> {
-    List<LottoDocument> findAll(Sort sort);
 }
