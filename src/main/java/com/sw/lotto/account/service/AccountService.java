@@ -22,10 +22,6 @@ public class AccountService {
                 .orElseThrow(() -> new AppException(NON_EXISTENT_SIGNINID));
     }
 
-    public Optional<AccountEntity> findAccountByObjectId(Long accountId) {
-        return accountRepository.findByObjectId(accountId);
-    }
-
     public Boolean existsBySignInId(String signInId) {
         return accountRepository.existsBySignInId(signInId);
     }

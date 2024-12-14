@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String token = this.resolveTokenFromRequest(request);
         String path = request.getRequestURI();
 
-        if (!path.equals("/api/account/refresh") && !path.equals("/api/account/signin") && !path.equals("/api/account/signup") &&
+        if (!path.startsWith("/api/auth/") &&
                 token != null && this.tokenManager.validateToken(token)) {
             Authentication auth = this.tokenManager.getAuthentication(token);
             SecurityContextHolder.getContext().setAuthentication(auth);

@@ -81,7 +81,7 @@ public class SecurityConfig {
         http.addFilterAfter(jwtExceptionFilter, JwtAuthenticationFilter.class);
 
         http.authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/api/auth/signup","/api/auth/signin","/api/auth/reissue").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/admin").hasRole("ADMIN") // ROLE_ADMIN
                 .anyRequest().authenticated()
         );

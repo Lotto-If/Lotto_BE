@@ -18,27 +18,27 @@ public class AuthController extends CommonController {
 
     private final AuthService authService;
 
-    @PostMapping("/signUp")
+    @PostMapping("/signup")
     public ApiResponse signUp(@RequestBody SignUpDto signUpDto) {
         final SignUpDto response = authService.signUp(signUpDto);
         return success(response);
     }
 
-    @PostMapping("/signIn")
+    @PostMapping("/signin")
     public ApiResponse signIn(@RequestBody SignInDto signInDto) {
         final AccountAuth response = authService.signIn(signInDto);
         return success(response);
     }
 
-    @PostMapping("/signOut")
+    @PostMapping("/signout")
     public ApiResponse signOut(@RequestHeader("Authorization") String accessToken) {
         authService.signOut(accessToken);
         return success();
     }
 
     @PostMapping("/reissue")
-    public ApiResponse reissue(@CookieValue("RefreshToken") String refreshToken, Principal principal) {
-        final AccountAuth response = authService.reissue(refreshToken, principal);
+    public ApiResponse reissue(@CookieValue("RefreshToken") String refreshToken, @RequestHeader("Authorization") String accessToken) {
+        final AccountAuth response = authService.reissue(refreshToken, accessToken);
         return success(response);
     }
 }

@@ -7,6 +7,7 @@ import com.sw.lotto.auth.domain.SignOutAccessToken;
 import com.sw.lotto.auth.model.AccountAuth;
 import com.sw.lotto.auth.model.SignInDto;
 import com.sw.lotto.auth.model.SignUpDto;
+import com.sw.lotto.global.common.model.ResultCode;
 import com.sw.lotto.global.exception.AppException;
 import com.sw.lotto.security.jwt.model.JwtTokenDto;
 import com.sw.lotto.security.jwt.util.JwtTokenUtil;
@@ -43,6 +44,9 @@ public class AuthService {
 
     @Transactional
     public SignUpDto signUp(SignUpDto signUpDto) {
+
+        // signupDto 필수값 null 체크 필요
+
         final String signInId = signUpDto.getSignInId();
 
         if (accountService.existsBySignInId(signInId)) {
@@ -96,40 +100,57 @@ public class AuthService {
     }
 
     //signOut
-    public void signOut(String accessToken) {
-        accessToken = jwtTokenUtil.resolveToken(accessToken);
+    public void signOut(String rawAccessToken) {
+        final String accessToken = jwtTokenUtil.resolveToken(rawAccessToken);
         if (accessToken == null) throw new AppException(INVALID_TOKEN);
         final String signInId = jwtTokenUtil.parseToken(accessToken);
         final long remainTime = jwtTokenUtil.getRemainTime(accessToken);
+        if (remainTime <= 0) throw new AppException(EXPIRED_TOKEN);
         refreshTokenService.deleteRefreshTokenById(signInId);
         signOutAccessTokenService.saveSignOutAccessToken(SignOutAccessToken.from(signInId, accessToken, remainTime));
     }
 
-    //reissue
-    public AccountAuth reissue(String refreshToken, Principal principal) {
-        if (principal == null || principal.getName() == null) {
-            throw new AppException(NOT_AUTHORIZED_ACCESS);
-        }
+    /**
+     * RefreshToken을 이용하여 AccessToken 재발급
+     * 만료된 accesstoken을 첨부해야함.
+     * -> redis의 refreshtoken과 요청한 refreshtoken이 일치하는지 확인용
+     * @param refreshToken
+     * @param rawAccessToken
+     * @return
+     */
+    public AccountAuth reissue(String refreshToken, String rawAccessToken) {
+        final String accessToken = jwtTokenUtil.resolveToken(rawAccessToken);
+        if (accessToken == null) throw new AppException(ResultCode.FAILURE, "재발급을 위해 기존 토큰을 첨부해주세요.");
 
-        final String curSignInId = principal.getName();
+        final String curSignInId = jwtTokenUtil.parseToken(accessToken);
+
         final RefreshToken redisRefreshToken = refreshTokenService.findRefreshTokenById(curSignInId);
 
         if (refreshToken == null || !refreshToken.equals(redisRefreshToken.getRefreshToken())) {
-            throw new AppException(MISMATCH_SIGNINID_TOKEN);
+            throw new AppException(ResultCode.FAILURE, "유효한 리프레시 토큰이 아닙니다.");
         }
+
+        // 기존 accessToken signout 처리
+        final long remainTime = jwtTokenUtil.getRemainTime(accessToken);
+        signOutAccessTokenService.saveSignOutAccessToken(SignOutAccessToken.from(curSignInId, accessToken, remainTime));
+
         return createRefreshToken(refreshToken, curSignInId);
     }
 
     private AccountAuth createRefreshToken(String refreshToken, String signInId) {
         final UserDetails userDetails = customUserDetailService.loadUserByUsername(signInId);
-        if (userDetails == null) throw new AppException(AUTHENTICATION_FAILED);
+        if (userDetails == null) throw new AppException(USERDETAILS_NOT_FOUND);
 
         final String accessToken = jwtTokenUtil.generateToken(signInId, ((AccountAuth) userDetails).getAccountId(), userDetails.getAuthorities(), JwtTokenUtil.ACCESS_TOKEN_EXPIRE_TIME);
-        if (accessToken == null) throw new AppException(AUTHENTICATION_FAILED);
+        if (accessToken == null) throw new AppException(ResultCode.FAILURE, "토큰 생성 실패");
 
         if (lessThanReissueExpirationTimesLeft(refreshToken)) {
+            // 기존 리프레시 토큰 삭제
+            refreshTokenService.deleteRefreshTokenById(signInId);
+
+            // 새로운 리프레시 토큰 생성
             final RefreshToken newRedisToken = refreshTokenService.saveRefreshToken(signInId, ((AccountAuth) userDetails).getAccountId(), userDetails.getAuthorities(), JwtTokenUtil.REFRESH_TOKEN_EXPIRE_TIME);
-            if (newRedisToken == null) throw new AppException(AUTHENTICATION_FAILED);
+            if (newRedisToken == null) throw new AppException(ResultCode.FAILURE, "리프레시 토큰 생성 실패");
             jwtTokenUtil.setRefreshTokenAtCookie(newRedisToken);
         }
 
