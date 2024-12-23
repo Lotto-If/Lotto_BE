@@ -1,6 +1,6 @@
 package com.sw.lotto.es.lotto.controller;
 
-import com.sw.lotto.common.controller.CommonController;
+import com.sw.lotto.global.common.controller.CommonController;
 import com.sw.lotto.es.lotto.model.LottoDocument;
 import com.sw.lotto.es.lotto.model.StatNumDocument;
 import com.sw.lotto.es.lotto.service.LottoService;
