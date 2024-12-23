@@ -1,0 +1,13 @@
+{
+  "properties" : {
+    "cnt" : {
+      "type" : "integer"
+    },
+    "number" : {
+      "type" : "integer"
+    },
+    "year" : {
+      "type" : "integer"
+    }
+  }
+}

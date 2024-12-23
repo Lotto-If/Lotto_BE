@@ -1,0 +1,20 @@
+{
+  "properties": {
+    "actualWinnings": {
+      "type": "long"
+    },
+    "prizeDate": {
+      "type": "date",
+      "format": "yyyy-MM-dd"
+    },
+    "round": {
+      "type": "integer"
+    },
+    "winnerNum": {
+      "type": "integer"
+    },
+    "winnings": {
+      "type": "long"
+    }
+  }
+}
