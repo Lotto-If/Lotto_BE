@@ -48,3 +48,8 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+// plain jar 생성 X 설정
+jar {
+    enabled = false
+}
