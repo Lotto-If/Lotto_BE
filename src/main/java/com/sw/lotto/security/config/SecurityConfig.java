@@ -83,6 +83,8 @@ public class SecurityConfig {
         http.authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/admin").hasRole("ADMIN") // ROLE_ADMIN
+                .requestMatchers("/swagger-ui/**").permitAll() // Swagger UI 경로 허용
+                .requestMatchers("/v3/api-docs/**").permitAll() // OpenAPI 문서 경로 허용
                 .anyRequest().authenticated()
         );
 
