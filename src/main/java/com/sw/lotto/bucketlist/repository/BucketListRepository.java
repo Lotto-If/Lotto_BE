@@ -5,6 +5,6 @@ import com.sw.lotto.bucketlist.domain.BucketListEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
-public interface BucketListRepository extends JpaRepository<BucketListEntity, Long> {
-    Optional<BucketListEntity> findByAccountAccountOidAndIsLotto(AccountEntity account, Boolean isLotto);
+public interface BucketListRepository extends JpaRepository<BucketListEntity, Boolean> {
+    Optional<BucketListEntity> findByAccountAndIsLotto(AccountEntity account, Boolean isLotto);
 }

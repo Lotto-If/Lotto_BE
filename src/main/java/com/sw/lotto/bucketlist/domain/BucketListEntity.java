@@ -19,7 +19,7 @@ public class BucketListEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_oid", nullable = false)
-    private AccountEntity account; // AccountEntity와의 연관 관계
+    private AccountEntity account;
 
     @OneToMany(mappedBy = "bucketList", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItemEntity> cartItems;

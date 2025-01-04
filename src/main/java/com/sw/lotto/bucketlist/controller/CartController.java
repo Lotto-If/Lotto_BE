@@ -3,7 +3,7 @@ package com.sw.lotto.bucketlist.controller;
 import com.sw.lotto.account.domain.AccountEntity;
 import com.sw.lotto.bucketlist.domain.CartItemEntity;
 import com.sw.lotto.global.common.model.TargetType;
-import com.sw.lotto.bucketlist.service.CartService;
+import com.sw.lotto.bucketlist.service.CartItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,26 +15,31 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CartController {
 
-    private final CartService cartService;
+    private final CartItemService cartItemService;
 
-    @PostMapping("/{isLotto}")
-    public ResponseEntity<CartItemEntity> addItemToCart(
+    @PostMapping("/add")
+    public ResponseEntity<CartItemEntity> addItemToBucketList(
             @RequestParam AccountEntity account,
             @PathVariable Boolean isLotto,
             @RequestParam TargetType targetType,
             @RequestParam Long targetId,
-            @RequestParam Long amount
+            @RequestParam Integer amount
     ) {
-        CartItemEntity addedItem = cartService.addItemToBucketList(account, isLotto, targetType, targetId, amount);
+        CartItemEntity addedItem = cartItemService.addItemToBucketList(account, isLotto, targetType, targetId, amount);
         return ResponseEntity.ok(addedItem);
     }
 
-    @GetMapping("/{isLotto}")
+    @GetMapping("/list")
     public ResponseEntity<List<CartItemEntity>> getCartItems(
             @RequestParam AccountEntity account,
             @PathVariable Boolean isLotto
     ) {
-        List<CartItemEntity> cartItems = cartService.getItemsInBucketList(account, isLotto);
+        List<CartItemEntity> cartItems = cartItemService.getCartItems(account, isLotto);
         return ResponseEntity.ok(cartItems);
+    }
+
+    @DeleteMapping("/remove/{cartItemId}")
+    public void removeCartItem(@PathVariable Long cartItemId) {
+        cartItemService.removeCartItem(cartItemId);
     }
 }

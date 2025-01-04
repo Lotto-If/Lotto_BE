@@ -16,11 +16,15 @@ public class CartItemEntity {
     @Enumerated(EnumType.STRING)
     private TargetType targetType;
 
+    @Column(nullable = false)
     private Long targetId;
-    private Long amount;
+
+    @Column(nullable = false)
+    private Integer amount;     // 수량
+
 
     @ManyToOne
-    @JoinColumn(name = "bucketlist_oid", nullable = false)
+    @JoinColumn(name = "bucket_list_oid", nullable = false)
     private BucketListEntity bucketList;
 }
 
