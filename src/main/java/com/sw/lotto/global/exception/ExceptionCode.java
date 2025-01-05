@@ -18,7 +18,12 @@ public enum ExceptionCode {
     ALREADY_LOGOUT_USER(ResultCode.UNAUTHORIZED, "이미 로그아웃된 사용자입니다."),
     ALREADY_EXIST_SIGNINID(ResultCode.FAILURE, "이미 존재하는 아이디입니다."),
     NOT_AUTHORIZED_ACCESS(ResultCode.UNAUTHORIZED, "접근 권한이 없습니다."),
-    AUTHENTICATION_FAILED(ResultCode.FAILURE, "사용자 인증과정에서 실패했습니다.");
+    AUTHENTICATION_FAILED(ResultCode.FAILURE, "사용자 인증과정에서 실패했습니다."),
+    NON_EXISTENT_CAR_PRODUCT(ResultCode.FAILURE, "존재하지 않는 CAR 상품입니다."),
+    NON_EXISTENT_REAL_ESTATE_PRODUCT(ResultCode.FAILURE, "존재하지 않는 REAL_ESTATE 상품입니다."),
+    NON_EXISTENT_LUXURY_PRODUCT(ResultCode.FAILURE, "존재하지 않는 LUXURY 상품입니다."),
+    NON_EXISTENT_PRODUCT_CATEGORY(ResultCode.FAILURE, "존재하지 않는 상품 카테고리입니다."),
+    ;
 
     private final ResultCode resultCode;
     private final String resultMessage;
