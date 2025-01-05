@@ -1,5 +1,6 @@
 package com.sw.lotto.bucketlist.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sw.lotto.account.domain.AccountEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@Entity
+@Entity(name = "bucketlist")
 public class BucketListEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +20,7 @@ public class BucketListEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_oid", nullable = false)
+    @JsonIgnore
     private AccountEntity account;
 
     @OneToMany(mappedBy = "bucketList", cascade = CascadeType.ALL, orphanRemoval = true)
