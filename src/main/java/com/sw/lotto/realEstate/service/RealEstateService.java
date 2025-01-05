@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.sw.lotto.global.exception.ExceptionCode.NON_EXISTENT_REAL_ESTATE_PRODUCT;
 
@@ -27,6 +29,8 @@ public class RealEstateService {
     }
 
     public List<RealEstateDocument> getRealEstatesWithSearchWord(String searchWord) {
-        return searchWord==null ? realEstateSearchRepository.findAll() : realEstateSearchRepository.findByPname(searchWord);
+        return searchWord == null ?
+                StreamSupport.stream(realEstateSearchRepository.findAll().spliterator(), false).collect(Collectors.toList())
+                : realEstateSearchRepository.findByPname(searchWord);
     }
 }

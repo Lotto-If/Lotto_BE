@@ -11,8 +11,6 @@ import java.util.List;
 
 @Repository
 public interface CarSearchRepository extends ElasticsearchRepository<CarDocument, String> {
-    List<CarDocument> findAll();
-
     @Query("{\"bool\": {\"should\": [ " +
             "{\"match\": {\"pname\": \"?0\"}}, " +
             "{\"match\": {\"brand\": \"?0\"}} ] }}")

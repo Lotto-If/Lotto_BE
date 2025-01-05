@@ -21,5 +21,4 @@ public interface LuxurySearchRepository extends ElasticsearchRepository<LuxuryDo
             "{\"match\": {\"brand\": \"?0\"}} ] }}")
     List<LuxuryDocument> findByNameOrBrandContaining(String searchWord);
 
-    List<LuxuryDocument> findAll();
 }

@@ -9,6 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.sw.lotto.global.exception.ExceptionCode.NON_EXISTENT_LUXURY_PRODUCT;
 
@@ -27,6 +29,9 @@ public class LuxuryService {
     }
 
     public List<LuxuryDocument> getLuxuriesWithSearchWord(String searchWord) {
-        return searchWord==null ? luxurySearchRepository.findAll() : luxurySearchRepository.findByNameOrBrandContaining(searchWord);
+        return searchWord == null ?
+                StreamSupport.stream(luxurySearchRepository.findAll().spliterator(), false)
+                        .collect(Collectors.toList())
+                : luxurySearchRepository.findByNameOrBrandContaining(searchWord);
     }
 }

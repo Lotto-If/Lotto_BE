@@ -7,10 +7,7 @@ import com.sw.lotto.product.model.ProductListRequeset;
 import com.sw.lotto.product.model.ProductListResponse;
 import com.sw.lotto.product.service.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,7 +31,7 @@ public class ProductController extends CommonController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse getProductDetail(@RequestParam String id, @RequestParam String category) {
+    public ApiResponse getProductDetail(@PathVariable String id, @RequestParam String category) {
         ProductDocument response = productService.getProductDetail(id, category);
         return success(response);
     }

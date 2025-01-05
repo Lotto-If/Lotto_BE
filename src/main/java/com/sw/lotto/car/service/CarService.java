@@ -10,6 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import static com.sw.lotto.global.exception.ExceptionCode.NON_EXISTENT_CAR_PRODUCT;
 
@@ -25,14 +27,6 @@ public class CarService {
 
     private final CarSearchRepository carSearchRepository;
 
-    public void test() {
-        log.info("test start");
-        List<CarDocument> cd = carSearchRepository.findAll();
-        log.info("cd-1: {}", cd.get(0));
-        log.info("cd-2: {}", cd.get(1));
-        log.info("cd-size: {}", cd.size());
-    }
-
     public CarDocument getCarDetail(String id) {
         return carSearchRepository.findById(id)
                 .orElseThrow(() -> new AppException(NON_EXISTENT_CAR_PRODUCT));
@@ -43,6 +37,8 @@ public class CarService {
     }
 
     public List<CarDocument> getCarsWithSearchWord(String searchWord) {
-        return searchWord==null ? carSearchRepository.findAll() : carSearchRepository.findByNameOrBrandContaining(searchWord);
+        return searchWord==null ?
+                StreamSupport.stream(carSearchRepository.findAll().spliterator(), false).collect(Collectors.toList())
+                : carSearchRepository.findByNameOrBrandContaining(searchWord);
     }
 }

@@ -115,17 +115,22 @@ public class ProductService {
         }
 
         // 전체 조회
-        return getAllProductList(productSort, plr.getSearchWord(), plr.getPageNumber(), plr.getPageSize());
+        return getAllProductList(productSort, plr.getSearchWord(), plr.getPageNumber(), plr.getPageSize(), pageable);
     }
 
-    private ProductListResponse getAllProductList(ProductSort productSort, String searchWord, int pageNumber, int pageSize) {
+    private ProductListResponse getAllProductList(ProductSort productSort, String searchWord, int pageNumber, int pageSize, Pageable pageable) {
         // elasticsearch multisearch를 사용하여 전체 상품 목록 조회
-        List<CarDocument> cars = carService.getCarsWithSearchWord(searchWord);
-        List<RealEstateDocument> realEstates = realEstateService.getRealEstatesWithSearchWord(searchWord);
-        List<LuxuryDocument> luxuries = luxuryService.getLuxuriesWithSearchWord(searchWord);
+        Page<CarDocument> carDocuments = carService.getCarsWithSearchWordAndPageable(searchWord, pageable);
+        List<CarDocument> cars = carDocuments.getContent();
+        Page<RealEstateDocument> realEstateDocuments = realEstateService.getRealEstatesWithSearchWordAndPageable(searchWord, pageable);
+        List<RealEstateDocument> realEstates = realEstateDocuments.getContent();
+        Page<LuxuryDocument> luxuryDocuments = luxuryService.getLuxuriesWithSearchWordAndPageable(searchWord, pageable);
+        List<LuxuryDocument> luxuries = luxuryDocuments.getContent();
+        long totalElements = carDocuments.getTotalElements() + realEstateDocuments.getTotalElements() + luxuryDocuments.getTotalElements();
 
         // CarDocument, RealEstateDocument, LuxuryDocument를 ProductDocument로 변환
-        List<ProductDocument> productDocuments = new ArrayList<>(cars.stream()
+        List<ProductDocument> productDocuments = new ArrayList<>();
+        productDocuments.addAll(cars.stream()
                 .map(carDocument -> (ProductDocument) carDocument) // 적절한 변환 로직
                 .toList());
         productDocuments.addAll(realEstates.stream()
@@ -151,8 +156,8 @@ public class ProductService {
         // 상품 목록을 반환한다.
         return ProductListResponse.builder()
                 .contents(paginatedList)
-                .totalPages((int) Math.ceil((double) productDocuments.size() / pageSize))   // 올림 처리
-                .totalElements(productDocuments.size())
+                .totalPages((int) Math.ceil((double) totalElements / pageSize))   // 올림 처리
+                .totalElements(totalElements)
                 .build();
     }
 

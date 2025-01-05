@@ -12,5 +12,4 @@ import java.util.List;
 public interface RealEstateSearchRepository extends ElasticsearchRepository<RealEstateDocument, String> {
     Page<RealEstateDocument> findByPname(String searchWord, Pageable pageable);
     List<RealEstateDocument> findByPname(String searchWord);
-    List<RealEstateDocument> findAll();
 }
