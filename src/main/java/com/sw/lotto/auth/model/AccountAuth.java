@@ -36,4 +36,5 @@ public class AccountAuth extends User {
         AccountAuth accountAuth = new AccountAuth(userName, authorities);
         return accountAuth;
     }
+
 }
