@@ -13,22 +13,10 @@ import org.springframework.data.elasticsearch.annotations.*;
 @Setting(settingPath = "elastic-setting.json")
 public class CarDocument extends ProductDocument {
 
-    @Id
-    private String pid;
-
     @Field(type = FieldType.Text)
-    private String pname;
-
-    @Field(type = FieldType.Keyword)
     private String brand;
 
     @Field(type = FieldType.Text)
-    private String imageURL;
-
-    @Field(type = FieldType.Text)
-    private String trim;
-
-    @Field(type = FieldType.Keyword)
-    private String carType;
+    private String option;
 
 }

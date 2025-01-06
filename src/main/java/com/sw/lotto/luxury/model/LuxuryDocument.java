@@ -13,25 +13,13 @@ import org.springframework.data.elasticsearch.annotations.*;
 @Setting(settingPath = "elastic-setting.json")
 public class LuxuryDocument extends ProductDocument {
 
-    @Id
-    private String pid;
-
     @Field(type = FieldType.Text)
-    private String pname;
-
-    @Field(type = FieldType.Keyword)
     private String brand;
-
-    @Field(type = FieldType.Text)
-    private String imageURL;
 
     @Field(type = FieldType.Text)
     private String option;
 
     @Field(type = FieldType.Keyword)
     private String sex;
-
-    @Field(type = FieldType.Keyword)
-    private String pcode;
 
 }
