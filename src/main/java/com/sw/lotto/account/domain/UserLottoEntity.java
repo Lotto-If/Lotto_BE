@@ -1,5 +1,6 @@
 package com.sw.lotto.account.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sw.lotto.account.domain.AccountEntity;
 import com.sw.lotto.global.common.model.BaseEntity;
 import jakarta.persistence.*;
@@ -10,22 +11,18 @@ import lombok.Setter;
 @Setter
 @Entity(name = "user_lotto")
 @Table(name = "user_lotto", indexes = {
-        @Index(name = "IDX_USER_LOTTO_ACCOUNT_ROUND", columnList = "oid, round")
+        @Index(name = "IDX_USER_LOTTO_ACCOUNT_ROUND", columnList = "account_oid, round")
 })
 public class UserLottoEntity extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_lotto_sequence")
-    @SequenceGenerator(
-            name = "user_lotto_sequence",
-            sequenceName = "user_lotto_sequence",
-            allocationSize = 1
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_lotto_oid", nullable = false, unique = true)
     private Long userLottoOid;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "OID", nullable = false)
+    @JoinColumn(name = "account_oid", nullable = false)
+    @JsonIgnore
     private AccountEntity account;
 
     @Column(nullable = false)
