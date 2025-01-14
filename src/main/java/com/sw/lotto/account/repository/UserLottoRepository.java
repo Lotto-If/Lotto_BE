@@ -13,4 +13,5 @@ import java.util.Optional;
 public interface UserLottoRepository extends JpaRepository<UserLottoEntity, Integer> {
     List<UserLottoEntity> findAllByAccount(AccountEntity account);
     Optional<UserLottoEntity> findByAccountAndRound(AccountEntity account, Integer round);
+    List<UserLottoEntity> findAllByRound(Integer round);
 }

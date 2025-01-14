@@ -10,7 +10,7 @@ import java.util.Date;
 @Setter
 @Mapping(mappingPath = "lotto-mapping.json")
 @Setting(settingPath = "elastic-setting.json")
-@Document(indexName = "lotto")
+@Document(indexName = "dhlottery")
 public class LottoDocument {
     @Id
     private String id;
@@ -30,4 +30,6 @@ public class LottoDocument {
     @Field(type = FieldType.Long)
     private Long winnings;
 
+    @Field(type = FieldType.Text) // 최종 당첨 번호
+    private String final_numbers;
 }

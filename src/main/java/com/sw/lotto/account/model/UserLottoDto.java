@@ -6,9 +6,7 @@ public class UserLottoDto {
     private Boolean notification;
 
     // Getters and Setters
-    public int getRound() {
-        return round;
-    }
+    public int getRound() {return round;}
     public String getPredictedNumbers() {
         return predictedNumbers;
     }
