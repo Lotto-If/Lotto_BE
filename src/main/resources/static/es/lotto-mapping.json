@@ -15,6 +15,9 @@
     },
     "winnings": {
       "type": "long"
+    },
+    "final_numbers": {
+      "type": "text"
     }
   }
 }

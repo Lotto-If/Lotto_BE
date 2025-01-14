@@ -21,7 +21,10 @@ public class UserLottoController {
 
     @PostMapping
     public ResponseEntity<UserLottoEntity> createUserLotto(@RequestBody UserLottoDto userLottoDto) {
+//        Integer latestRound = userLottoService.getLatestLottoRound();
+
         UserLottoEntity userLottoEntity = new UserLottoEntity();
+//        userLottoEntity.setRound(latestRound);
         userLottoEntity.setRound(userLottoDto.getRound());
         userLottoEntity.setPredictedNumbers(userLottoDto.getPredictedNumbers());
         userLottoEntity.setNotification(userLottoDto.getNotification());
@@ -33,12 +36,18 @@ public class UserLottoController {
     @GetMapping
     public ResponseEntity<?> getUserLotto(@RequestParam(required = false) Integer round){
         if (round != null) {
-            Optional<UserLottoEntity> userLottoEntity = userLottoService.getUserLottoByRound(round);
-            return ResponseEntity.ok(userLottoEntity);
+            Optional<UserLottoEntity> userLotto = userLottoService.getUserLottoByRound(round);
+            return ResponseEntity.ok(userLotto);
         } else {
             List<UserLottoEntity> userLottos = userLottoService.getUserLottoByAccount();
             return ResponseEntity.ok(userLottos);
         }
+    }
+
+    @PostMapping("/check-winnings")
+    public ResponseEntity<?> checkWinnings() {
+        userLottoService.checkWinningsAndNotify();
+        return ResponseEntity.ok("Winnings checked and notifications sent.");
     }
 
 }
