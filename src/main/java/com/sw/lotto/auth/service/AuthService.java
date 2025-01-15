@@ -100,6 +100,7 @@ public class AuthService {
     }
 
     //signOut
+    @Transactional
     public void signOut(String rawAccessToken) {
         final String accessToken = jwtTokenUtil.resolveToken(rawAccessToken);
         if (accessToken == null) throw new AppException(INVALID_TOKEN);
@@ -118,6 +119,7 @@ public class AuthService {
      * @param rawAccessToken
      * @return
      */
+    @Transactional
     public AccountAuth reissue(String refreshToken, String rawAccessToken) {
         final String accessToken = jwtTokenUtil.resolveToken(rawAccessToken);
         if (accessToken == null) throw new AppException(ResultCode.FAILURE, "재발급을 위해 기존 토큰을 첨부해주세요.");
