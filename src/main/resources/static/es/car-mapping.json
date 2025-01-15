@@ -1,22 +1,22 @@
 {
-  "properties": {
-    "pname": {
-      "type": "text"
+  "properties" : {
+    "brand" : {
+      "type" : "text"
     },
-    "brand": {
-      "type": "text"
+    "imageURL" : {
+      "type" : "keyword"
     },
-    "price": {
-      "type": "integer"
+    "option" : {
+      "type" : "text"
     },
-    "imageURL": {
-      "type": "text"
+    "pcode" : {
+      "type" : "keyword"
     },
-    "pcode": {
-      "type": "keyword"
+    "pname" : {
+      "type" : "text"
     },
-    "option": {
-      "type": "text"
+    "price" : {
+      "type" : "long"
     }
   }
 }

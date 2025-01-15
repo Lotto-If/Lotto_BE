@@ -1,25 +1,25 @@
 {
-  "properties": {
-    "pname": {
-      "type": "text"
+  "properties" : {
+    "brand" : {
+      "type" : "text"
     },
-    "brand": {
-      "type": "text"
+    "imageURL" : {
+      "type" : "keyword"
     },
-    "price": {
-      "type": "integer"
+    "option" : {
+      "type" : "text"
     },
-    "imageURL": {
-      "type": "text"
+    "pcode" : {
+      "type" : "keyword"
     },
-    "option": {
-      "type": "text"
+    "pname" : {
+      "type" : "text"
     },
-    "sex": {
-      "type": "keyword"
+    "price" : {
+      "type" : "long"
     },
-    "pcode": {
-      "type": "keyword"
+    "sex" : {
+      "type" : "keyword"
     }
   }
 }
