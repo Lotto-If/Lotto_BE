@@ -16,10 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Get Public IP
-        id: ip
-        uses: haythem/public-ip@v1.3
-
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -55,6 +51,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: 'ap-northeast-2'
 
+      - name: Get Public IP
+        id: ip
+        uses: haythem/public-ip@v1.3
+
       - name: Add GitHub Actions IP
         run: |
           aws ec2 authorize-security-group-ingress \
@@ -83,4 +83,3 @@ jobs:
               --protocol tcp \
               --port 22 \
               --cidr ${{ steps.ip.outputs.ipv4 }}/32
-
