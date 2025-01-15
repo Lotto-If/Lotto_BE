@@ -15,6 +15,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Get Public IP
+        id: ip
+        uses: haythem/public-ip@v1.3
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
@@ -43,6 +48,21 @@ jobs:
     needs: build-and-push
 
     steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: 'ap-northeast-2'
+
+      - name: Add GitHub Actions IP
+        run: |
+          aws ec2 authorize-security-group-ingress \
+              --group-id ${{ secrets.SECURITY_GROUP_ID }} \
+              --protocol tcp \
+              --port 22 \
+              --cidr ${{ steps.ip.outputs.ipv4 }}/32
+
       - name: Docker image pull & Deploy to EC2
         uses: appleboy/ssh-action@master
         with:
@@ -55,3 +75,11 @@ jobs:
             sudo docker run -d --name lotto-app -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/lotto-was:develop
             sudo docker rm $(sudo docker ps --filter 'status=exited' -a -q)
             sudo docker image prune -a -f
+
+      - name: Remove GitHub Actions IP
+        run: |
+          aws ec2 revoke-security-group-ingress \
+              --group-id ${{ secrets.SECURITY_GROUP_ID }} \
+              --protocol tcp \
+              --port 22 \
+              --cidr ${{ steps.ip.outputs.ipv4 }}/32
