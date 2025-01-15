@@ -1,22 +1,22 @@
 {
   "properties": {
-    "name": {
+    "pname": {
       "type": "text"
     },
     "brand": {
-      "type": "keyword"
+      "type": "text"
     },
     "price": {
       "type": "integer"
     },
-    "thumbnail_url": {
+    "imageURL": {
       "type": "text"
     },
-    "trim": {
-      "type": "text"
-    },
-    "car_type": {
+    "pcode": {
       "type": "keyword"
+    },
+    "option": {
+      "type": "text"
     }
   }
 }
