@@ -11,10 +11,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class TestController extends CommonController {
 
-    private final CarService carService;
-
-    @PostMapping("/car")
-    public void carTest() {
-        carService.test();
-    }
 }

@@ -1,0 +1,22 @@
+{
+  "properties": {
+    "pname": {
+      "type": "text"
+    },
+    "brand": {
+      "type": "text"
+    },
+    "price": {
+      "type": "integer"
+    },
+    "imageURL": {
+      "type": "text"
+    },
+    "pcode": {
+      "type": "keyword"
+    },
+    "option": {
+      "type": "text"
+    }
+  }
+}
