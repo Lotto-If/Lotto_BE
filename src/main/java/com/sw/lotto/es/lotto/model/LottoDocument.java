@@ -31,5 +31,5 @@ public class LottoDocument {
     private Long winnings;
 
     @Field(type = FieldType.Text) // 최종 당첨 번호
-    private String final_numbers;
+    private String finalNumbers;
 }
