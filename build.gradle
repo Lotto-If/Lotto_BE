@@ -54,6 +54,18 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+test {
+    environment "ELASTIC_URL", System.getenv("ELASTIC_URL")
+    environment "DATASOURCE_URL", System.getenv("DATASOURCE_URL")
+    environment "DATASOURCE_USERNAME", System.getenv("DATASOURCE_USERNAME")
+    environment "DATASOURCE_PASSWORD", System.getenv("DATASOURCE_PASSWORD")
+    environment "JWT_SECRET", System.getenv("JWT_SECRET")
+    environment "REDIS_HOST", System.getenv("REDIS_HOST")
+    environment "REDIS_PORT", System.getenv("REDIS_PORT")
+    environment "MAIL_USERNAME", System.getenv("MAIL_USERNAME")
+    environment "MAIL_PASSWORD", System.getenv("MAIL_PASSWORD")
+}
+
 jar {
     enabled = false
 }
