@@ -7,6 +7,7 @@ import com.sw.lotto.account.repository.UserLottoRepository;
 import com.sw.lotto.bucketlist.domain.BucketListEntity;
 import com.sw.lotto.es.lotto.model.LottoDocument;
 import com.sw.lotto.es.lotto.repository.LottoRepository;
+import com.sw.lotto.mail.MailService;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -25,7 +26,7 @@ public class UserLottoService {
 
     private final UserLottoRepository userLottoRepository;
     private final AccountRepository accountRepository;
-//    private final JavaMailSender mailSender;
+    private final MailService mailService;
     private final LottoRepository lottoRepository;
 
     private AccountEntity getCurrentAccount() {
@@ -72,7 +73,7 @@ public class UserLottoService {
         LottoDocument lottoInfo = lottoRepository.findByRound(latestRound)
                 .orElseThrow(() -> new RuntimeException("No lotto data for round: " + latestRound));
 
-        List<Integer> lottoNumbers = Arrays.stream(lottoInfo.getFinal_numbers().split(","))
+        List<Integer> lottoNumbers = Arrays.stream(lottoInfo.getFinalNumbers().split(","))
                 .map(String::trim)
                 .map(Integer::parseInt)
                 .toList();
@@ -93,7 +94,7 @@ public class UserLottoService {
             userLotto.setPrizeRank(prizeRank);
             userLottoRepository.save(userLotto);
 
-            // 이메일 전송 로직 추가 예정
+            mailService.sendPrizeNotificationEmail(userLotto, prizeRank, matchCount);
         }
     }
 

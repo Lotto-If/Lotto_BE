@@ -16,7 +16,7 @@
     "winnings": {
       "type": "long"
     },
-    "final_numbers": {
+    "finalNumbers": {
       "type": "text"
     }
   }
