@@ -21,6 +21,18 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+          
+      - name: Set environment variables
+        run: |
+          echo "ELASTIC_URL=${{ secrets.ELASTIC_URL }}" >> $GITHUB_ENV
+          echo "DATASOURCE_URL=${{ secrets.DATASOURCE_URL }}" >> $GITHUB_ENV
+          echo "DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}" >> $GITHUB_ENV
+          echo "DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}" >> $GITHUB_ENV
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> $GITHUB_ENV
+          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> $GITHUB_ENV
+          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> $GITHUB_ENV
+          echo "MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}" >> $GITHUB_ENV
+          echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> $GITHUB_ENV
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
