@@ -2,11 +2,11 @@ spring:
   application:
     name: lotto
   elastic:
-    url: ${ELASTIC_URL}
+    url: 116.37.91.221:9200
   datasource:
-    url: ${DATASOURCE_URL}
-    username: ${DATASOURCE_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
+    url: jdbc:mysql://116.37.91.221:3306/lotto?useSSL=false&serverTimezone=Asia/Seoul&useUnicode=true&characterEncoding=UTF-8
+    username: niscom
+    password: niscom
     driver-class-name: com.mysql.cj.jdbc.Driver
   mvc:
     favicon:
@@ -20,29 +20,20 @@ spring:
       hibernate.format_sql: true
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
     defer-datasource-initialization: false
+
   sql:
     init:
       mode: always # 초기화 스크립트 사용 여부
+
   jwt:
-    secret: ${JWT_SECRET}
+    secret: secretlottoabcdjwtauthenticationverylongsecuresecretkeyforhs512algorithmsecretlottoabcdjwtauthenticationverylongsecuresecretkeyforhs512algorithm
+
   data:
     redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
+      host: localhost
+      port: 6379
   cache:
     type: redis
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          timeout: 5000
-          starttls:
-            enable: true
 
 logging:
   level:
@@ -67,4 +58,3 @@ springdoc:
   default-produces-media-type: application/json
   writer-with-default-pretty-printer: true
   model-and-view-allowed: true
-
