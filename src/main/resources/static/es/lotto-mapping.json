@@ -4,8 +4,7 @@
       "type": "long"
     },
     "prizeDate": {
-      "type": "date",
-      "format": "yyyy-MM-dd"
+      "type": "text"
     },
     "round": {
       "type": "integer"

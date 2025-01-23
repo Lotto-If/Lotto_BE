@@ -18,8 +18,8 @@ public class LottoDocument {
     @Field(type = FieldType.Long)
     private Long actualWinnings;
 
-//    @Field(type = FieldType.Date, format = DateFormat.basic_date)
-//    private Date prizeDate;
+    @Field(type = FieldType.Text)
+    private String prizeDate;
 
     @Field(type = FieldType.Integer)
     private Integer round;

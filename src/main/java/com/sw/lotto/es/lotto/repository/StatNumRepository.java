@@ -1,10 +1,12 @@
 package com.sw.lotto.es.lotto.repository;
 
 import com.sw.lotto.es.lotto.model.StatNumDocument;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
-import java.util.List;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface StatNumRepository extends ElasticsearchRepository<StatNumDocument, String> {
-    List<StatNumDocument> findByYearOrderByCntDesc(Integer year);
-    List<StatNumDocument> findByYearOrderByNumberAsc(Integer year);
+    Page<StatNumDocument> findByYear(Integer year, Pageable pageable);
 }

@@ -60,9 +60,7 @@ public class UserLottoService {
 
     public Integer getLatestLottoRound() {
         // 엘라스틱서치에서 최신 회차 가져오기
-        return lottoRepository.findTopByOrderByRoundDesc()
-                .map(LottoDocument::getRound)
-                .orElseThrow(() -> new RuntimeException("No lotto data found"));
+        return lottoRepository.findTopByOrderByRoundDesc().getRound();
     }
 
     // @Scheduled(cron = "0 0 22 * * SAT")
