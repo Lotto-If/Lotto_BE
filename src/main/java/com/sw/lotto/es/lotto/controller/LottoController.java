@@ -1,38 +1,37 @@
 package com.sw.lotto.es.lotto.controller;
 
-import com.sw.lotto.global.common.controller.CommonController;
-import com.sw.lotto.es.lotto.model.LottoDocument;
-import com.sw.lotto.es.lotto.model.StatNumDocument;
+import com.sw.lotto.es.lotto.dto.LottoDto;
 import com.sw.lotto.es.lotto.service.LottoService;
+import com.sw.lotto.global.exception.AppException;
+import com.sw.lotto.global.exception.ExceptionCode;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/lotto")
 @RequiredArgsConstructor
-public class LottoController extends CommonController {
+@Validated
+public class LottoController {
 
-    @Autowired
-    private LottoService lottoService;
+    private final LottoService lottoService;
 
     @GetMapping("/list")
-    public Page<LottoDocument> getAllLotto(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+    public ResponseEntity<Page<LottoDto>> getAllLotto(
+            @RequestParam(defaultValue = "0") @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page,
+            @RequestParam(defaultValue = "10") @Min(value = 1, message = "페이지 크기는 1 이상이어야 합니다.") int size,
             @RequestParam(defaultValue = "round") String sortBy) {
-        return lottoService.getLottoList(page, size, sortBy);
+        Page<LottoDto> lottoList = lottoService.getLottoList(page, size, sortBy);
+        return ResponseEntity.ok(lottoList);
     }
 
-    @GetMapping("/statNum")
-    public List<StatNumDocument> getStatNum(
-            @RequestParam(defaultValue = "2024") Integer year,
-            @RequestParam(defaultValue = "cnt") String sortBy
-    ){
-        return lottoService.getStatNumList(year, sortBy);
-
+    @GetMapping("/{round}")
+    public ResponseEntity<LottoDto> getLottoByRound(
+            @PathVariable @Min(value = 1153, message = "회차 번호는 1153 이상이어야 합니다.") Integer round) {
+        LottoDto lottoDto = lottoService.getLottoByRound(round);
+        return ResponseEntity.ok(lottoDto);
     }
 }

@@ -23,6 +23,7 @@ public enum ExceptionCode {
     NON_EXISTENT_REAL_ESTATE_PRODUCT(ResultCode.FAILURE, "존재하지 않는 REAL_ESTATE 상품입니다."),
     NON_EXISTENT_LUXURY_PRODUCT(ResultCode.FAILURE, "존재하지 않는 LUXURY 상품입니다."),
     NON_EXISTENT_PRODUCT_CATEGORY(ResultCode.FAILURE, "존재하지 않는 상품 카테고리입니다."),
+    NON_EXISTENT_LOTTO(ResultCode.NOTFOUND,"존재하지 않는 로또 정보입니다."),
     ;
 
     private final ResultCode resultCode;
