@@ -19,7 +19,7 @@ spring:
     properties:
       hibernate.format_sql: true
       dialect: org.hibernate.dialect.MySQL8InnoDBDialect
-    defer-datasource-initialization: false
+    defer-datasource-initialization: true
   sql:
     init:
       mode: always # 초기화 스크립트 사용 여부

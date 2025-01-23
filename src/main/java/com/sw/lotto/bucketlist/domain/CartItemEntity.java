@@ -23,10 +23,8 @@ public class CartItemEntity {
     @Column(nullable = false)
     private Integer amount;     // 수량
 
-
     @ManyToOne
     @JoinColumn(name = "bucket_list_oid", nullable = false)
-    @JsonIgnore
     private BucketListEntity bucketList;
 }
 

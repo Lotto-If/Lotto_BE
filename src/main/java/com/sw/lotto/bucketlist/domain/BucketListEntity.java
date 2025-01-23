@@ -11,6 +11,9 @@ import java.util.List;
 @Getter
 @Setter
 @Entity(name = "bucketlist")
+@Table(name = "bucketlist", indexes = {
+        @jakarta.persistence.Index(name = "idx_account_isLotto", columnList = "account_oid")
+})
 public class BucketListEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +23,10 @@ public class BucketListEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_oid", nullable = false)
-    @JsonIgnore
     private AccountEntity account;
 
     @OneToMany(mappedBy = "bucketList", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CartItemEntity> cartItems;
 
 }
+
