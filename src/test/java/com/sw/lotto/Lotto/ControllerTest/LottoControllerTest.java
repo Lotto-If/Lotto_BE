@@ -56,7 +56,7 @@ class LottoControllerTest {
         Page<LottoDto> page = new PageImpl<>(List.of(dto1, dto2));
         when(lottoService.getLottoList(anyInt(), anyInt(), anyString())).thenReturn(page);
 
-        mvc.perform(get("/api/lotto/list")
+        mvc.perform(get("/api/lotto")
                         .param("page", "0")
                         .param("size", "10")
                         .param("sortBy", "round"))
@@ -79,7 +79,7 @@ class LottoControllerTest {
     @Test
     @DisplayName("유효하지 않은 페이지 번호 넘기기")
     public void testInvalidPageNumber() throws Exception {
-        mvc.perform(get("/api/lotto/list")
+        mvc.perform(get("/api/lotto")
                         .param("page", "-1")
                         .param("size", "10"))
                 .andExpect(status().isBadRequest())
@@ -89,7 +89,7 @@ class LottoControllerTest {
     @Test
     @DisplayName("유효하지 않은 페이지 사이즈 넘기기")
     public void testInvalidPageSize() throws Exception {
-        mvc.perform(get("/api/lotto/list")
+        mvc.perform(get("/api/lotto")
                         .param("page", "0")
                         .param("size", "0"))
                 .andExpect(status().isBadRequest())

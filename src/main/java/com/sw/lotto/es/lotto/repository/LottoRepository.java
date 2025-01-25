@@ -7,6 +7,6 @@ import java.util.Optional;
 
 @Repository
 public interface LottoRepository extends ElasticsearchRepository<LottoDocument, String> {
-    LottoDocument findTopByOrderByRoundDesc();
+    Optional<LottoDocument> findTopByOrderByRoundDesc();
     Optional<LottoDocument> findByRound(Integer round);
 }
