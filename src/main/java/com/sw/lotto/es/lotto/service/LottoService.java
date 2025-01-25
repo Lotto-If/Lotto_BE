@@ -30,6 +30,12 @@ public class LottoService {
                 .orElseThrow(() -> new AppException(ExceptionCode.NON_EXISTENT_LOTTO));
     }
 
+    public LottoDto getLatestLotto() {
+        return lottoRepository.findTopByOrderByRoundDesc()
+                .map(this::toLottoDTO) // DTO로 매핑
+                .orElseThrow(() -> new AppException(ExceptionCode.NON_EXISTENT_LOTTO));
+    }
+
     private LottoDto toLottoDTO(LottoDocument doc) {
         return new LottoDto(
                 doc.getId(),

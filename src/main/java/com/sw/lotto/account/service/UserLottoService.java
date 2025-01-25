@@ -5,8 +5,10 @@ import com.sw.lotto.account.domain.UserLottoEntity;
 import com.sw.lotto.account.repository.AccountRepository;
 import com.sw.lotto.account.repository.UserLottoRepository;
 import com.sw.lotto.bucketlist.domain.BucketListEntity;
+import com.sw.lotto.es.lotto.dto.LottoDto;
 import com.sw.lotto.es.lotto.model.LottoDocument;
 import com.sw.lotto.es.lotto.repository.LottoRepository;
+import com.sw.lotto.es.lotto.service.LottoService;
 import com.sw.lotto.mail.MailService;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +29,7 @@ public class UserLottoService {
     private final UserLottoRepository userLottoRepository;
     private final AccountRepository accountRepository;
     private final MailService mailService;
-    private final LottoRepository lottoRepository;
+    private final LottoService lottoService;
 
     private AccountEntity getCurrentAccount() {
         String signInId = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -37,7 +39,7 @@ public class UserLottoService {
 
     public UserLottoEntity saveUserLotto(UserLottoEntity userLottoEntity) {
         AccountEntity account = getCurrentAccount();
-        Integer latestRound = getLatestLottoRound();
+        Integer latestRound = lottoService.getLatestLotto().getRound();
 
         if (userLottoEntity.getRound() < latestRound) {
             throw new RuntimeException("과거 로또 회차는 입력할 수 없습니다.");
@@ -58,18 +60,12 @@ public class UserLottoService {
         return userLottoRepository.findByAccountAndRound(account, round);
     }
 
-    public Integer getLatestLottoRound() {
-        // 엘라스틱서치에서 최신 회차 가져오기
-        return lottoRepository.findTopByOrderByRoundDesc().getRound();
-    }
-
     // @Scheduled(cron = "0 0 22 * * SAT")
     public void checkWinningsAndNotify() {
-        Integer latestRound = getLatestLottoRound();
-        List<UserLottoEntity> userLottos = userLottoRepository.findAllByRound(latestRound);
+        LottoDto lottoInfo = lottoService.getLatestLotto();
+        Integer latestRound = lottoInfo.getRound();
 
-        LottoDocument lottoInfo = lottoRepository.findByRound(latestRound)
-                .orElseThrow(() -> new RuntimeException("No lotto data for round: " + latestRound));
+        List<UserLottoEntity> userLottos = userLottoRepository.findAllByRound(latestRound);
 
         List<Integer> lottoNumbers = Arrays.stream(lottoInfo.getFinalNumbers().split(","))
                 .map(String::trim)

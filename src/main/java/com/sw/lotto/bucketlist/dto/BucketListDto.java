@@ -1,5 +1,6 @@
 package com.sw.lotto.bucketlist.dto;
 import com.sw.lotto.bucketlist.domain.BucketListEntity;
+import com.sw.lotto.bucketlist.domain.CartItemEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -11,13 +12,18 @@ import java.util.stream.Collectors;
 public class BucketListDto {
     private Long bucketListOid;
     private Boolean isLotto;
+    private Long totalPrice;
+    private Long lottoPrize;
     private List<CartItemDto> cartItems;
 
-    public static BucketListDto fromEntity(BucketListEntity entity) {
+
+    public static BucketListDto fromEntity(BucketListEntity entity, List<CartItemEntity> cartItems) {
         return new BucketListDto(
                 entity.getBucketListOid(),
                 entity.getIsLotto(),
-                entity.getCartItems().stream().map(CartItemDto::fromEntity).collect(Collectors.toList())
+                entity.getTotalPrice(),
+                entity.getLottoPrize(),
+                cartItems.stream().map(CartItemDto::fromEntity).collect(Collectors.toList())
         );
     }
 }
