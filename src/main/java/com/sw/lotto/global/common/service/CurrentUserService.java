@@ -15,6 +15,12 @@ public class CurrentUserService {
     private final AccountRepository accountRepository;
 
     public AccountEntity getCurrentUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ExceptionCode.UNAUTHORIZED_USER);
+        }
+
         String signInId = SecurityContextHolder.getContext().getAuthentication().getName();
         return accountRepository.findBySignInId(signInId)
                 .orElseThrow(() -> new AppException(ExceptionCode.NON_EXISTENT_USER));

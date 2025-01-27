@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -23,15 +25,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 class StatNumServiceTest {
 
+    @InjectMocks
     StatNumService statNumService;
 
-    @MockBean
+    @Mock
     StatNumRepository statNumRepository;
-
-    @BeforeEach
-    void setUp() {
-        statNumService = new StatNumService(statNumRepository);
-    }
 
     @Test
     @DisplayName("로또 통계 리스트 조회 성공")

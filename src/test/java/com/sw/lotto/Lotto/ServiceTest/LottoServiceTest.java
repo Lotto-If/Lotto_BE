@@ -10,6 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -24,9 +26,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(SpringExtension.class)
 class LottoServiceTest {
 
+    @InjectMocks
     LottoService lottoService;
 
-    @MockBean
+    @Mock
     LottoRepository lottoRepository;
 
     private LottoDocument lotto1;
@@ -34,14 +37,11 @@ class LottoServiceTest {
 
     @BeforeEach
     void setUp() {
-        lottoService = new LottoService(lottoRepository);
-
         lotto1 = new LottoDocument();
         lotto1.setRound(1);
 
         lotto2 = new LottoDocument();
         lotto2.setRound(2);
-
     }
 
     @Test
