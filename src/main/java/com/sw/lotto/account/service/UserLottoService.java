@@ -13,7 +13,9 @@ import com.sw.lotto.global.exception.AppException;
 import com.sw.lotto.global.exception.ExceptionCode;
 import com.sw.lotto.mail.MailService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
@@ -88,17 +90,16 @@ public class UserLottoService {
         return UserLottoResponseDto.fromEntity(updatedEntity);
     }
 
+    // @Scheduled(cron = "0 0 22 * * SAT", zone = "Asia/Seoul")
+    @Transactional
     public void checkWinningsAndNotify() {
         LottoDto lottoInfo = lottoService.getLatestLotto();
         Integer latestRound = lottoInfo.getRound();
 
         LottoResult lottoResult = parseLottoNumbers(lottoInfo);
-
         List<UserLottoEntity> userLottos = userLottoRepository.findAllByRound(latestRound);
-
         processUserLottos(userLottos, lottoResult);
-
-        notifyUsers(userLottos);
+        notifyUsers(userLottos,lottoInfo);
     }
 
     private LottoResult parseLottoNumbers(LottoDto lottoInfo) {
@@ -129,9 +130,10 @@ public class UserLottoService {
         }
     }
 
-    private void notifyUsers(List<UserLottoEntity> userLottos) {
+    private void notifyUsers(List<UserLottoEntity> userLottos,LottoDto lottoDto) {
         for (UserLottoEntity userLotto : userLottos) {
-            mailService.sendPrizeNotificationEmail(userLotto, userLotto.getPrizeRank(), userLotto.getCorrectCount());
+            mailService.sendPrizeNotificationEmail(
+                    userLotto, userLotto.getPrizeRank(), userLotto.getCorrectCount(), lottoDto.getFinalNumbers());
         }
     }
 
