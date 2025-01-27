@@ -1,11 +1,9 @@
 package com.sw.lotto.es.lotto.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
+@Getter
+@Setter
 @AllArgsConstructor
 public class LottoDto {
     private String id;
