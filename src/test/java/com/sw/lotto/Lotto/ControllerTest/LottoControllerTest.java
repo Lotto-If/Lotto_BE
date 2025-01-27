@@ -23,6 +23,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,6 +50,7 @@ class LottoControllerTest {
         dto2 = new LottoDto("2", 1000000L, "2025-01-01", 1154, 2, 5000000L, "1,2,3,4,5,6");
     }
 
+
     @Test
     @DisplayName("로또 리스트 반환 받기")
     void getLottoList_success() throws Exception {
@@ -61,6 +63,7 @@ class LottoControllerTest {
                         .param("size", "10")
                         .param("sortBy", "round"))
                 .andExpect(status().isOk())
+                .andDo(print())
                 .andExpect(jsonPath("$.content[0].round").value(1153))
                 .andExpect(jsonPath("$.content[1].round").value(1154));
     }
