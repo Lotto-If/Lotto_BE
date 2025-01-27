@@ -2,20 +2,17 @@ package com.sw.lotto.account.service;
 
 import com.sw.lotto.account.domain.AccountEntity;
 import com.sw.lotto.account.domain.UserLottoEntity;
-import com.sw.lotto.account.repository.AccountRepository;
+import com.sw.lotto.account.model.LottoResult;
+import com.sw.lotto.account.model.UserLottoRequestDto;
+import com.sw.lotto.account.model.UserLottoResponseDto;
 import com.sw.lotto.account.repository.UserLottoRepository;
-import com.sw.lotto.bucketlist.domain.BucketListEntity;
 import com.sw.lotto.es.lotto.dto.LottoDto;
-import com.sw.lotto.es.lotto.model.LottoDocument;
-import com.sw.lotto.es.lotto.repository.LottoRepository;
 import com.sw.lotto.es.lotto.service.LottoService;
+import com.sw.lotto.global.common.service.CurrentUserService;
+import com.sw.lotto.global.exception.AppException;
+import com.sw.lotto.global.exception.ExceptionCode;
 import com.sw.lotto.mail.MailService;
-import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -27,46 +24,84 @@ import java.util.Optional;
 public class UserLottoService {
 
     private final UserLottoRepository userLottoRepository;
-    private final AccountRepository accountRepository;
     private final MailService mailService;
     private final LottoService lottoService;
+    private final CurrentUserService currentUserService;
 
-    private AccountEntity getCurrentAccount() {
-        String signInId = SecurityContextHolder.getContext().getAuthentication().getName();
-        return accountRepository.findBySignInId(signInId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-    public UserLottoEntity saveUserLotto(UserLottoEntity userLottoEntity) {
-        AccountEntity account = getCurrentAccount();
+    public UserLottoResponseDto saveUserLotto(UserLottoRequestDto userLottoRequestDto) {
+        AccountEntity account = currentUserService.getCurrentUser();
         Integer latestRound = lottoService.getLatestLotto().getRound();
 
-        if (userLottoEntity.getRound() < latestRound) {
-            throw new RuntimeException("과거 로또 회차는 입력할 수 없습니다.");
+        if (userLottoRequestDto.getRound() < latestRound) {
+            throw new AppException(ExceptionCode.INVALID_LOTTO_ROUND);}
+
+        if (!isValidPredictedNumbers(userLottoRequestDto.getPredictedNumbers())) {
+            throw new AppException(ExceptionCode.INVALID_PREDICTED_NUMBERS);}
+
+        UserLottoEntity entity = UserLottoRequestDto.toEntity(userLottoRequestDto, account);
+        UserLottoEntity savedEntity = userLottoRepository.save(entity);
+        return UserLottoResponseDto.fromEntity(savedEntity);
+    }
+
+    private boolean isValidPredictedNumbers(String predictedNumbers) {
+        try {
+            List<Integer> numbers = Arrays.stream(predictedNumbers.split(","))
+                    .map(String::trim)
+                    .map(Integer::parseInt)
+                    .toList();
+            return numbers.size() == 6 && numbers.stream().allMatch(n -> n >= 1 && n <= 45);
+        } catch (Exception e) {
+            return false;
         }
-
-        userLottoEntity.setAccount(account);
-        return userLottoRepository.save(userLottoEntity);
     }
 
-    public List<UserLottoEntity> getUserLottoByAccount() {
-        AccountEntity account = getCurrentAccount();
+    public List<UserLottoResponseDto> getUserLottoByAccount() {
+        AccountEntity account = currentUserService.getCurrentUser();
         List<UserLottoEntity> userLottoList = userLottoRepository.findAllByAccount(account);
-        return userLottoList;
+        return userLottoList.stream().map(UserLottoResponseDto::fromEntity).toList();
     }
 
-    public Optional<UserLottoEntity> getUserLottoByRound(Integer round) {
-        AccountEntity account = getCurrentAccount();
-        return userLottoRepository.findByAccountAndRound(account, round);
+    public Optional<UserLottoResponseDto> getUserLottoByRound(Integer round) {
+        AccountEntity account = currentUserService.getCurrentUser();
+
+        return userLottoRepository.findByAccountAndRound(account, round)
+                .map(UserLottoResponseDto::fromEntity)
+                .or(() -> {
+                    throw new AppException(ExceptionCode.NON_EXISTENT_LOTTO);
+                });
     }
 
-    // @Scheduled(cron = "0 0 22 * * SAT")
+    public void removeUserLotto(Long userLottoOid) {
+        UserLottoEntity existingEntity = userLottoRepository.findByUserLottoOid(userLottoOid)
+                .orElseThrow(() -> new AppException(ExceptionCode.NON_EXISTENT_LOTTO));
+        userLottoRepository.delete(existingEntity);
+    }
+
+    public UserLottoResponseDto updateUserLotto(Long userLottoOid, String predictedNumbers) {
+        UserLottoEntity existingEntity = userLottoRepository.findByUserLottoOid(userLottoOid)
+                .orElseThrow(() -> new AppException(ExceptionCode.NON_EXISTENT_LOTTO));
+
+        if (!isValidPredictedNumbers(predictedNumbers)) {
+            throw new AppException(ExceptionCode.INVALID_PREDICTED_NUMBERS);}
+
+        UserLottoEntity updatedEntity = userLottoRepository.save(existingEntity);
+        return UserLottoResponseDto.fromEntity(updatedEntity);
+    }
+
     public void checkWinningsAndNotify() {
         LottoDto lottoInfo = lottoService.getLatestLotto();
         Integer latestRound = lottoInfo.getRound();
 
+        LottoResult lottoResult = parseLottoNumbers(lottoInfo);
+
         List<UserLottoEntity> userLottos = userLottoRepository.findAllByRound(latestRound);
 
+        processUserLottos(userLottos, lottoResult);
+
+        notifyUsers(userLottos);
+    }
+
+    private LottoResult parseLottoNumbers(LottoDto lottoInfo) {
         List<Integer> lottoNumbers = Arrays.stream(lottoInfo.getFinalNumbers().split(","))
                 .map(String::trim)
                 .map(Integer::parseInt)
@@ -74,21 +109,29 @@ public class UserLottoService {
         Integer bonusNumber = lottoNumbers.get(lottoNumbers.size() - 1);
         List<Integer> mainNumbers = lottoNumbers.subList(0, lottoNumbers.size() - 1);
 
+        return new LottoResult(mainNumbers, bonusNumber);
+    }
+
+    private void processUserLottos(List<UserLottoEntity> userLottos, LottoResult lottoResult) {
         for (UserLottoEntity userLotto : userLottos) {
             List<Integer> predictedNumbers = Arrays.stream(userLotto.getPredictedNumbers().split(","))
                     .map(String::trim)
                     .map(Integer::parseInt)
                     .toList();
 
-            long matchCount = predictedNumbers.stream().filter(mainNumbers::contains).count();
-            boolean hasBonusNumber = predictedNumbers.contains(bonusNumber);
+            long matchCount = predictedNumbers.stream().filter(lottoResult.getMainNumbers()::contains).count();
+            boolean hasBonusNumber = predictedNumbers.contains(lottoResult.getBonusNumber());
 
             String prizeRank = determinePrizeRank(matchCount, hasBonusNumber);
             userLotto.setCorrectCount((int) matchCount);
             userLotto.setPrizeRank(prizeRank);
             userLottoRepository.save(userLotto);
+        }
+    }
 
-            mailService.sendPrizeNotificationEmail(userLotto, prizeRank, matchCount);
+    private void notifyUsers(List<UserLottoEntity> userLottos) {
+        for (UserLottoEntity userLotto : userLottos) {
+            mailService.sendPrizeNotificationEmail(userLotto, userLotto.getPrizeRank(), userLotto.getCorrectCount());
         }
     }
 
