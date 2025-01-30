@@ -11,9 +11,9 @@ import com.sw.lotto.es.lotto.service.LottoService;
 import com.sw.lotto.global.common.service.CurrentUserService;
 import com.sw.lotto.global.exception.AppException;
 import com.sw.lotto.global.exception.ExceptionCode;
-import com.sw.lotto.mail.MailService;
+import com.sw.lotto.mail.MailLogEntity;
+import com.sw.lotto.mail.MailLogService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +26,7 @@ import java.util.Optional;
 public class UserLottoService {
 
     private final UserLottoRepository userLottoRepository;
-    private final MailService mailService;
+    private final MailLogService mailLogService;
     private final LottoService lottoService;
     private final CurrentUserService currentUserService;
 
@@ -130,10 +130,12 @@ public class UserLottoService {
         }
     }
 
-    private void notifyUsers(List<UserLottoEntity> userLottos,LottoDto lottoDto) {
+    private void notifyUsers(List<UserLottoEntity> userLottos, LottoDto lottoDto) {
         for (UserLottoEntity userLotto : userLottos) {
-            mailService.sendPrizeNotificationEmail(
-                    userLotto, userLotto.getPrizeRank(), userLotto.getCorrectCount(), lottoDto.getFinalNumbers());
+            MailLogEntity email = mailLogService.preparePrizeNotificationEmail(
+                    userLotto, userLotto.getPrizeRank(), userLotto.getCorrectCount(), lottoDto.getFinalNumbers()
+            );
+            mailLogService.sendEmail(email); // EmailEntity로 전송
         }
     }
 

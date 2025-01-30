@@ -9,25 +9,35 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MailService {
+public class MailLogService {
 
     private final JavaMailSender mailSender;
+    private final MailLogRepository mailLogRepository; // 전송 이력 저장소
 
-    public void sendPrizeNotificationEmail(UserLottoEntity userLotto, String prizeRank, long matchCount, String finalNumber) {
+    public void sendEmail(MailLogEntity mailLogEntity) {
         try {
-            String toEmail = userLotto.getAccount().getEmail();
-
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-            helper.setTo(toEmail);
-            helper.setSubject("로또 당첨 결과 알림 - " + userLotto.getRound() + "회차");
-            helper.setText(buildEmailContent(userLotto, prizeRank, matchCount,finalNumber), true);
+            helper.setTo(mailLogEntity.getRecipientEmail());
+            helper.setSubject(mailLogEntity.getTitle());
+            helper.setText(mailLogEntity.getContent(), true);
 
             mailSender.send(message);
+
+            mailLogEntity.setSentSuccessfully(true);
         } catch (Exception e) {
-            throw new RuntimeException("이메일 전송 중 오류가 발생했습니다: " + e.getMessage(), e);
+            mailLogEntity.setSentSuccessfully(false);
+            mailLogEntity.setErrorMessage(e.getMessage());
+        } finally {
+            mailLogRepository.save(mailLogEntity);
         }
+    }
+
+    public MailLogEntity preparePrizeNotificationEmail(UserLottoEntity userLotto, String prizeRank, long matchCount, String finalNumber) {
+        String subject = "로또 당첨 결과 알림 - " + userLotto.getRound() + "회차";
+        String content = buildEmailContent(userLotto, prizeRank, matchCount, finalNumber);
+        return MailLogEntity.create(userLotto.getAccount().getEmail(), subject, content, "LottoNotification");
     }
 
     private String buildEmailContent(UserLottoEntity userLotto, String prizeRank, long matchCount, String finalNumber) {
