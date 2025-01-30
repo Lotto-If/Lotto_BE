@@ -3,9 +3,11 @@ package com.sw.lotto.bucketlist.dto;
 import com.sw.lotto.bucketlist.domain.CartItemEntity;
 import com.sw.lotto.global.common.model.TargetType;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class CartItemDto {
     private Long cartItemId;

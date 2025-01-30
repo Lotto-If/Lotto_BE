@@ -2,12 +2,14 @@ package com.sw.lotto.bucketlist.dto;
 import com.sw.lotto.bucketlist.domain.BucketListEntity;
 import com.sw.lotto.bucketlist.domain.CartItemEntity;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 public class BucketListDto {
     private Long bucketListOid;

@@ -11,7 +11,8 @@ import lombok.Setter;
 @Setter
 @Entity(name = "user_lotto")
 @Table(name = "user_lotto", indexes = {
-        @Index(name = "IDX_USER_LOTTO_ACCOUNT_ROUND", columnList = "account_oid, round")
+        @Index(name = "idx_account_oid", columnList = "account_oid"),
+        @Index(name = "idx_round", columnList = "round")
 })
 public class UserLottoEntity extends BaseEntity {
 
