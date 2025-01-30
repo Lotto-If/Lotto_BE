@@ -5,15 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
 
 import java.time.LocalDateTime;
 
-@Entity(name = "mailLog")
+
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity(name = "mailLog")
 @Table(name = "mailLog", indexes = {
         @Index(name = "idx_sent_successfully", columnList = "sentSuccessfully")
 })
@@ -42,6 +40,7 @@ public class MailLogEntity {
         mailLogEntity.setTitle(title);
         mailLogEntity.setContent(content);
         mailLogEntity.setEmailType(emailType);
+        mailLogEntity.setSentTime(LocalDateTime.now());
 
         return mailLogEntity;
     }

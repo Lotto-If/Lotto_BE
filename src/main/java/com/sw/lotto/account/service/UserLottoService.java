@@ -132,10 +132,10 @@ public class UserLottoService {
 
     private void notifyUsers(List<UserLottoEntity> userLottos, LottoDto lottoDto) {
         for (UserLottoEntity userLotto : userLottos) {
-            MailLogEntity email = mailLogService.preparePrizeNotificationEmail(
-                    userLotto, userLotto.getPrizeRank(), userLotto.getCorrectCount(), lottoDto.getFinalNumbers()
-            );
-            mailLogService.sendEmail(email); // EmailEntity로 전송
+            if (Boolean.TRUE.equals(userLotto.getNotification())) {
+                MailLogEntity email = mailLogService.preparePrizeNotificationEmail(userLotto, lottoDto.getFinalNumbers());
+                mailLogService.sendEmail(email);
+            }
         }
     }
 
