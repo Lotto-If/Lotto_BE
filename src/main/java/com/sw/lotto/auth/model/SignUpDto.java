@@ -2,11 +2,13 @@ package com.sw.lotto.auth.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sw.lotto.account.domain.AccountEntity;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class SignUpDto {
     private String signInId;
     private String password;
