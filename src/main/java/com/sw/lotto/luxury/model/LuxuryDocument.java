@@ -22,4 +22,10 @@ public class LuxuryDocument extends ProductDocument {
     @Field(type = FieldType.Keyword)
     private String sex;
 
+    public LuxuryDocument(String pid, String pname, String pcode, Long price, String imageURL, String brand, String option, String sex) {
+        super(pid, pname, pcode, price, imageURL);
+        this.brand = brand;
+        this.option = option;
+        this.sex = sex;
+    }
 }
