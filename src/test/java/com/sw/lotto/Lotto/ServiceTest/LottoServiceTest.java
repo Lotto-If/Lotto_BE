@@ -1,6 +1,6 @@
 package com.sw.lotto.Lotto.ServiceTest;
 
-import com.sw.lotto.es.lotto.dto.LottoDto;
+import com.sw.lotto.es.lotto.dto.LottoResponseDto;
 import com.sw.lotto.es.lotto.model.LottoDocument;
 import com.sw.lotto.es.lotto.repository.LottoRepository;
 import com.sw.lotto.es.lotto.service.LottoService;
@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -50,7 +49,7 @@ class LottoServiceTest {
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "round"));
         when(lottoRepository.findAll(pageable)).thenReturn(new PageImpl<>(List.of(lotto1,lotto2)));
 
-        Page<LottoDto> result = lottoService.getLottoList(0, 10, "round");
+        Page<LottoResponseDto> result = lottoService.getLottoList(0, 10, "round");
 
         assertThat(result.getTotalElements()).isEqualTo(2);
         assertThat(result.getContent()).hasSize(2);
@@ -62,7 +61,7 @@ class LottoServiceTest {
     void getLottoByRound_success() {
         when(lottoRepository.findByRound(1)).thenReturn(Optional.of(lotto1));
 
-        LottoDto result = lottoService.getLottoByRound(1);
+        LottoResponseDto result = lottoService.getLottoByRound(1);
 
         assertThat(result).isNotNull();
         assertThat(result.getRound()).isEqualTo(1);

@@ -1,6 +1,6 @@
 package com.sw.lotto.es.lotto.service;
 
-import com.sw.lotto.es.lotto.dto.StatNumDto;
+import com.sw.lotto.es.lotto.dto.StatNumResponseDto;
 import com.sw.lotto.es.lotto.model.StatNumDocument;
 import com.sw.lotto.es.lotto.repository.StatNumRepository;
 import com.sw.lotto.global.exception.AppException;
@@ -18,7 +18,7 @@ public class StatNumService {
 
     private final StatNumRepository statNumRepository;
 
-    public Page<StatNumDto> getStatNumList(Integer year, String sortBy, int page, int size) {
+    public Page<StatNumResponseDto> getStatNumList(Integer year, String sortBy, int page, int size) {
         Sort sort = Sort.by(
                 "number".equalsIgnoreCase(sortBy) ? Sort.Direction.ASC : Sort.Direction.DESC,
                 "number".equalsIgnoreCase(sortBy) ? "number" : "cnt"
@@ -28,15 +28,6 @@ public class StatNumService {
         if (documents.isEmpty()) {
             throw new AppException(ExceptionCode.NON_EXISTENT_LOTTO);
         }
-        return documents.map(this::toStatNumDTO);
-    }
-
-    private StatNumDto toStatNumDTO(StatNumDocument doc) {
-        return new StatNumDto(
-                doc.getId(),
-                doc.getCnt(),
-                doc.getNumber(),
-                doc.getYear()
-        );
+        return documents.map(StatNumResponseDto::fromStatNumDoc);
     }
 }

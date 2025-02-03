@@ -11,21 +11,22 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @AllArgsConstructor
-public class BucketListDto {
+public class BucketListResponseDto {
     private Long bucketListOid;
     private Boolean isLotto;
     private Long totalPrice;
     private Long lottoPrize;
-    private List<CartItemDto> cartItems;
+    private List<CartItemResponseDto> cartItems;
 
 
-    public static BucketListDto fromEntity(BucketListEntity entity, List<CartItemEntity> cartItems) {
-        return new BucketListDto(
+
+    public static BucketListResponseDto fromBucketListEntity(BucketListEntity entity, List<CartItemEntity> cartItems) {
+        return new BucketListResponseDto(
                 entity.getBucketListOid(),
                 entity.getIsLotto(),
                 entity.getTotalPrice(),
                 entity.getLottoPrize(),
-                cartItems.stream().map(CartItemDto::fromEntity).collect(Collectors.toList())
+                cartItems.stream().map(CartItemResponseDto::fromCartItemEntity).collect(Collectors.toList())
         );
     }
 }

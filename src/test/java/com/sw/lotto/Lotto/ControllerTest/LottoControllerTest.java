@@ -1,7 +1,7 @@
 package com.sw.lotto.Lotto.ControllerTest;
 
 import com.sw.lotto.es.lotto.controller.LottoController;
-import com.sw.lotto.es.lotto.dto.LottoDto;
+import com.sw.lotto.es.lotto.dto.LottoResponseDto;
 import com.sw.lotto.es.lotto.service.LottoService;
 import com.sw.lotto.security.filter.JwtAuthenticationFilter;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,13 +41,13 @@ class LottoControllerTest {
     @MockBean
     JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    LottoDto dto1;
-    LottoDto dto2;
+    LottoResponseDto dto1;
+    LottoResponseDto dto2;
 
     @BeforeEach
     void setUp() {
-        dto1 = new LottoDto("1", 1000000L, "2025-01-01", 1153, 1, 5000000L, "1,2,3,4,5,6");
-        dto2 = new LottoDto("2", 1000000L, "2025-01-01", 1154, 2, 5000000L, "1,2,3,4,5,6");
+        dto1 = new LottoResponseDto("1", 1000000L, "2025-01-01", 1153, 1, 5000000L, "1,2,3,4,5,6");
+        dto2 = new LottoResponseDto("2", 1000000L, "2025-01-01", 1154, 2, 5000000L, "1,2,3,4,5,6");
     }
 
 
@@ -55,7 +55,7 @@ class LottoControllerTest {
     @DisplayName("로또 리스트 반환 받기")
     void getLottoList_success() throws Exception {
 
-        Page<LottoDto> page = new PageImpl<>(List.of(dto1, dto2));
+        Page<LottoResponseDto> page = new PageImpl<>(List.of(dto1, dto2));
         when(lottoService.getLottoList(anyInt(), anyInt(), anyString())).thenReturn(page);
 
         mvc.perform(get("/api/lotto")

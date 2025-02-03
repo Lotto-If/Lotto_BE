@@ -31,14 +31,15 @@ public class CartItemEntity {
     @JoinColumn(name = "bucket_list_oid", nullable = false)
     private BucketListEntity bucketList;
 
-    public static CartItemEntity create(TargetType targetType, String targetId, Integer amount, BucketListEntity bucketList){
+    public static CartItemEntity create(String targetId, TargetType targetType, Integer amount, BucketListEntity bucketList) {
         CartItemEntity cartItem = new CartItemEntity();
-        cartItem.setTargetType(targetType);
-        cartItem.setTargetId(targetId);
-        cartItem.setAmount(amount);
-        cartItem.setBucketList(bucketList);
+        cartItem.targetId = targetId;
+        cartItem.targetType = targetType;
+        cartItem.amount = amount;
+        cartItem.bucketList = bucketList;
 
         return cartItem;
     }
+
 }
 

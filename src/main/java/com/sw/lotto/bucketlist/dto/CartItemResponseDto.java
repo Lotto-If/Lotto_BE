@@ -9,14 +9,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class CartItemDto {
+public class CartItemResponseDto {
     private Long cartItemId;
     private TargetType targetType;
     private String targetId;
     private Integer amount;
 
-    public static CartItemDto fromEntity(CartItemEntity entity) {
-        return new CartItemDto(
+    public static CartItemResponseDto fromCartItemEntity(CartItemEntity entity) {
+        return new CartItemResponseDto(
                 entity.getCartItemId(),
                 entity.getTargetType(),
                 entity.getTargetId(),

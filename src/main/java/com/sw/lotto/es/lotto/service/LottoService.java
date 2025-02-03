@@ -1,7 +1,6 @@
 package com.sw.lotto.es.lotto.service;
 
-import com.sw.lotto.es.lotto.dto.LottoDto;
-import com.sw.lotto.es.lotto.model.LottoDocument;
+import com.sw.lotto.es.lotto.dto.LottoResponseDto;
 import com.sw.lotto.es.lotto.repository.LottoRepository;
 import com.sw.lotto.global.exception.AppException;
 import com.sw.lotto.global.exception.ExceptionCode;
@@ -18,33 +17,22 @@ public class LottoService {
 
     private final LottoRepository lottoRepository;
 
-    public Page<LottoDto> getLottoList(int page, int size, String sortBy) {
+    public Page<LottoResponseDto> getLottoList(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, sortBy));
         return lottoRepository.findAll(pageable)
-                .map(this::toLottoDTO);
+                .map(LottoResponseDto::fromLottoDoc);
     }
 
-    public LottoDto getLottoByRound(Integer round) {
+    public LottoResponseDto getLottoByRound(Integer round) {
         return lottoRepository.findByRound(round)
-                .map(this::toLottoDTO)
+                .map(LottoResponseDto::fromLottoDoc)
                 .orElseThrow(() -> new AppException(ExceptionCode.NON_EXISTENT_LOTTO));
     }
 
-    public LottoDto getLatestLotto() {
+    public LottoResponseDto getLatestLotto() {
         return lottoRepository.findTopByOrderByRoundDesc()
-                .map(this::toLottoDTO) // DTO로 매핑
+                .map(LottoResponseDto::fromLottoDoc) // DTO로 매핑
                 .orElseThrow(() -> new AppException(ExceptionCode.NON_EXISTENT_LOTTO));
     }
 
-    private LottoDto toLottoDTO(LottoDocument doc) {
-        return new LottoDto(
-                doc.getId(),
-                doc.getActualWinnings(),
-                doc.getPrizeDate(),
-                doc.getRound(),
-                doc.getWinnerNum(),
-                doc.getWinnings(),
-                doc.getFinalNumbers()
-        );
-    }
 }
