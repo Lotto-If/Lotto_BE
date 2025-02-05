@@ -63,14 +63,13 @@ public class UserLottoService {
         return userLottoList.stream().map(UserLottoResponseDto::fromUserLottoEntity).toList();
     }
 
-    public Optional<UserLottoResponseDto> getUserLottoByRound(Integer round) {
+    public UserLottoResponseDto getUserLottoByRound(Integer round) {
         AccountEntity account = currentUserService.getCurrentUser();
 
-        return userLottoRepository.findByAccountAndRound(account, round)
-                .map(UserLottoResponseDto::fromUserLottoEntity)
-                .or(() -> {
-                    throw new AppException(ExceptionCode.NON_EXISTENT_LOTTO);
-                });
+        UserLottoEntity userLottoEntity = userLottoRepository.findByAccountAndRound(account, round)
+                .orElseThrow(() -> new AppException(ExceptionCode.NON_EXISTENT_LOTTO));
+
+        return UserLottoResponseDto.fromUserLottoEntity(userLottoEntity);
     }
 
     public void removeUserLotto(Long userLottoOid) {

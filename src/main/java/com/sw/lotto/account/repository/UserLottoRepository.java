@@ -15,5 +15,4 @@ public interface UserLottoRepository extends JpaRepository<UserLottoEntity, Inte
     List<UserLottoEntity> findAllByRound(Integer round);
     Optional<UserLottoEntity> findByAccountAndRound(AccountEntity account, Integer round);
     Optional<UserLottoEntity> findByUserLottoOid(Long userLottoOid);
-
 }
