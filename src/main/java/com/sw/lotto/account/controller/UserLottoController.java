@@ -28,7 +28,7 @@ public class UserLottoController {
     public ResponseEntity<?> getUserLotto(
             @RequestParam(required = false) Integer round) {
         if (round != null) {
-            Optional<UserLottoResponseDto> userLotto = userLottoService.getUserLottoByRound(round);
+            UserLottoResponseDto userLotto = userLottoService.getUserLottoByRound(round);
             return ResponseEntity.ok(userLotto);
         } else {
             List<UserLottoResponseDto> userLottos = userLottoService.getUserLottoByAccount();

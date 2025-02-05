@@ -1,9 +1,8 @@
 package com.sw.lotto.bucketlist.controller;
 
-import com.sw.lotto.bucketlist.dto.BucketListDto;
+import com.sw.lotto.bucketlist.dto.BucketListResponseDto;
+import com.sw.lotto.bucketlist.dto.CartItemRequestDto;
 import com.sw.lotto.bucketlist.service.BucketListService;
-import com.sw.lotto.global.common.model.TargetType;
-import com.sw.lotto.product.model.ProductCategory;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,17 +20,15 @@ public class CartController {
     @PostMapping
     public ResponseEntity<?> addItemToBucketList(
             @RequestParam Boolean isLotto,
-            @RequestParam TargetType targetType,
-            @RequestParam String targetId,
-            @RequestParam @Min(value = 1, message = "수량은 1개 이상이어야 합니다.") Integer amount) {
-        Long cartItemId = bucketListService.addItemToBucketList(isLotto, targetType, targetId, amount);
+            @RequestParam CartItemRequestDto cartItemRequestDto) {
+        Long cartItemId = bucketListService.addItemToBucketList(isLotto, cartItemRequestDto);
         return ResponseEntity.ok(Map.of("cartItemId", cartItemId));
     }
 
     @GetMapping
-    public ResponseEntity<BucketListDto> getCurrentBucketList(
+    public ResponseEntity<BucketListResponseDto> getCurrentBucketList(
             @RequestParam(defaultValue = "true") Boolean isLotto) {
-        BucketListDto bucketList = bucketListService.getBucketListForCurrentUser(isLotto);
+        BucketListResponseDto bucketList = bucketListService.getBucketListForCurrentUser(isLotto);
         return ResponseEntity.ok(bucketList);
     }
 

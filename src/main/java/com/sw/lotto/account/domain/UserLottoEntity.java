@@ -2,7 +2,11 @@ package com.sw.lotto.account.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sw.lotto.account.domain.AccountEntity;
+import com.sw.lotto.account.model.UserLottoRequestDto;
+import com.sw.lotto.bucketlist.domain.BucketListEntity;
+import com.sw.lotto.bucketlist.domain.CartItemEntity;
 import com.sw.lotto.global.common.model.BaseEntity;
+import com.sw.lotto.global.common.model.TargetType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,15 +31,25 @@ public class UserLottoEntity extends BaseEntity {
     private AccountEntity account;
 
     @Column(nullable = false)
-    private int round; // 회차
+    private int round;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    private String predictedNumbers; // 예측 번호
+    private String predictedNumbers;
 
     @Column(nullable = false)
-    private Boolean notification; // 알림 여부
+    private Boolean notification;
 
-    private int correctCount; // 정답 개수
+    private int correctCount;
 
-    private String prizeRank; // 당첨 등수 (1등, 2등, 낙첨 등)
+    private String prizeRank;
+
+    public static UserLottoEntity create(Integer round, String predictedNumbers,
+                                         Boolean notification, AccountEntity account) {
+        UserLottoEntity userLotto = new UserLottoEntity();
+        userLotto.round = round;
+        userLotto.predictedNumbers = predictedNumbers;
+        userLotto.notification = notification;
+        userLotto.account = account;
+        return userLotto;
+    }
 }

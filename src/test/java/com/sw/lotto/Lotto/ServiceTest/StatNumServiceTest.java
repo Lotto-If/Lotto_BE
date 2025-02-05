@@ -1,18 +1,16 @@
 package com.sw.lotto.Lotto.ServiceTest;
 
-import com.sw.lotto.es.lotto.dto.StatNumDto;
+import com.sw.lotto.es.lotto.dto.StatNumResponseDto;
 import com.sw.lotto.es.lotto.model.StatNumDocument;
 import com.sw.lotto.es.lotto.repository.StatNumRepository;
 import com.sw.lotto.es.lotto.service.StatNumService;
 import com.sw.lotto.global.exception.AppException;
 import com.sw.lotto.global.exception.ExceptionCode;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -45,7 +43,7 @@ class StatNumServiceTest {
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "cnt"));
         when(statNumRepository.findByYear(2025, pageable)).thenReturn(new PageImpl<>(List.of(stat2,stat1)));
 
-        Page<StatNumDto> result = statNumService.getStatNumList(2025, "cnt", 0, 10);
+        Page<StatNumResponseDto> result = statNumService.getStatNumList(2025, "cnt", 0, 10);
 
         assertThat(result.getTotalElements()).isEqualTo(2);
         assertThat(result.getContent())

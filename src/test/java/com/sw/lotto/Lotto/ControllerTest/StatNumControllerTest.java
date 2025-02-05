@@ -1,7 +1,7 @@
 package com.sw.lotto.Lotto.ControllerTest;
 
 import com.sw.lotto.es.lotto.controller.StatNumController;
-import com.sw.lotto.es.lotto.dto.StatNumDto;
+import com.sw.lotto.es.lotto.dto.StatNumResponseDto;
 import com.sw.lotto.es.lotto.service.StatNumService;
 import com.sw.lotto.security.filter.JwtAuthenticationFilter;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,19 +39,19 @@ class StatNumControllerTest {
     @MockBean
     JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    StatNumDto dto1;
-    StatNumDto dto2;
+    StatNumResponseDto dto1;
+    StatNumResponseDto dto2;
 
     @BeforeEach
     void setUp(){
-        dto1 = new StatNumDto("1",100,13,2024);
-        dto2 = new StatNumDto("2",200,7,2024);
+        dto1 = new StatNumResponseDto("1",100,13,2024);
+        dto2 = new StatNumResponseDto("2",200,7,2024);
     }
 
     @Test
     @DisplayName("로또 통계 리스트 반환 받기")
     void getStatNumList_Success() throws Exception {
-        Page<StatNumDto> page = new PageImpl<>(List.of(dto2, dto1));
+        Page<StatNumResponseDto> page = new PageImpl<>(List.of(dto2, dto1));
         when(statNumService.getStatNumList(anyInt(), anyString(), anyInt(), anyInt())).thenReturn(page);
 
         mvc.perform(get("/api/lotto/statNum")

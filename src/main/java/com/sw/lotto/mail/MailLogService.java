@@ -48,7 +48,7 @@ public class MailLogService {
                 "<p>예측하신 번호: " + userLotto.getPredictedNumbers() + "</p>" +
                 "<p>당첨 번호: " + finalNumber + "</p>" +
                 "<p>맞춘 개수: " + userLotto.getCorrectCount() + "개</p>" +
-                "<p>당첨 등수: " + userLotto.getCorrectCount() + "</p>" +
+                "<p>당첨 등수: " + userLotto.getPrizeRank() + "</p>" +
                 "<p>감사합니다. 다음 회차도 행운을 빕니다!</p>" +
                 "</body>" +
                 "</html>";

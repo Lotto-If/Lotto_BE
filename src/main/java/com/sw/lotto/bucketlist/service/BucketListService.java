@@ -3,12 +3,12 @@ package com.sw.lotto.bucketlist.service;
 import com.sw.lotto.account.domain.AccountEntity;
 import com.sw.lotto.bucketlist.domain.BucketListEntity;
 import com.sw.lotto.bucketlist.domain.CartItemEntity;
-import com.sw.lotto.bucketlist.dto.BucketListDto;
+import com.sw.lotto.bucketlist.dto.BucketListResponseDto;
+import com.sw.lotto.bucketlist.dto.CartItemRequestDto;
 import com.sw.lotto.bucketlist.repository.BucketListRepository;
 import com.sw.lotto.bucketlist.repository.CartItemRepository;
-import com.sw.lotto.es.lotto.dto.LottoDto;
+import com.sw.lotto.es.lotto.dto.LottoResponseDto;
 import com.sw.lotto.es.lotto.service.LottoService;
-import com.sw.lotto.global.common.model.TargetType;
 import com.sw.lotto.global.common.service.CurrentUserService;
 import com.sw.lotto.global.exception.AppException;
 import com.sw.lotto.global.exception.ExceptionCode;
@@ -31,18 +31,18 @@ public class BucketListService {
     private final ProductService productService;
 
 
-    public BucketListDto getBucketListForCurrentUser(Boolean isLotto) {
+    public BucketListResponseDto getBucketListForCurrentUser(Boolean isLotto) {
         AccountEntity currentUser = currentUserService.getCurrentUser();
         BucketListEntity bucketList = getOrCreateBucketList(currentUser, isLotto);
 
         List<CartItemEntity> cartItems = cartItemRepository.findByBucketList(bucketList);
-        return BucketListDto.fromEntity(bucketList, cartItems);
+        return BucketListResponseDto.fromBucketListEntity(bucketList, cartItems);
     }
 
     private BucketListEntity getOrCreateBucketList(AccountEntity account, Boolean isLotto) {
         return bucketListRepository.findByAccountAndIsLotto(account, isLotto)
                 .orElseGet(() -> {
-                    LottoDto latestLottoInfo = isLotto ? lottoService.getLatestLotto() : null;
+                    LottoResponseDto latestLottoInfo = isLotto ? lottoService.getLatestLotto() : null;
                     BucketListEntity newBucketList = BucketListEntity.create(
                             account, isLotto,
                             latestLottoInfo != null ? latestLottoInfo.getRound() : null,
@@ -53,15 +53,17 @@ public class BucketListService {
     }
 
     @Transactional
-    public Long addItemToBucketList(Boolean isLotto, TargetType targetType, String targetId, Integer amount) {
+    public Long addItemToBucketList(Boolean isLotto, CartItemRequestDto cartItemRequestDto) {
         AccountEntity currentUser = currentUserService.getCurrentUser();
         BucketListEntity bucketList = getOrCreateBucketList(currentUser, isLotto);
-        Long price = productService.getProductDetail(targetId,targetType.toString()).getPrice();
+        Long price = productService.getProductDetail(
+                cartItemRequestDto.getTargetId(),
+                cartItemRequestDto.getTargetType().toString()).getPrice();
 
-        validateLottoLimit(bucketList, price * amount);
-        updateTotalPrice(bucketList, price * amount);
+        validateLottoLimit(bucketList, price * cartItemRequestDto.getAmount());
+        updateTotalPrice(bucketList, price * cartItemRequestDto.getAmount());
 
-        CartItemEntity cartItem = CartItemEntity.create(targetType, targetId, amount, bucketList);
+        CartItemEntity cartItem = cartItemRequestDto.toCartItemEntity(bucketList);
         cartItemRepository.save(cartItem);
 
         return cartItem.getCartItemId();

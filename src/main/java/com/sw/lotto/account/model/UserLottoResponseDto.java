@@ -15,7 +15,7 @@ public class UserLottoResponseDto {
     private int correctCount; // 정답 개수
     private String prizeRank; // 당첨 등수
 
-    public static UserLottoResponseDto fromEntity(UserLottoEntity entity) {
+    public static UserLottoResponseDto fromUserLottoEntity(UserLottoEntity entity) {
         UserLottoResponseDto dto = new UserLottoResponseDto();
         dto.setUserLottoOid(entity.getUserLottoOid());
         dto.setRound(entity.getRound());
