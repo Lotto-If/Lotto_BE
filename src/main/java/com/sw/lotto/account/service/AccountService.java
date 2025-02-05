@@ -4,7 +4,9 @@ import com.sw.lotto.account.domain.AccountEntity;
 import com.sw.lotto.account.model.AccountDto;
 import com.sw.lotto.account.repository.AccountRepository;
 import com.sw.lotto.global.exception.AppException;
+import com.sw.lotto.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,5 +35,17 @@ public class AccountService {
     public void updateLastSignInAt(AccountEntity accountEntity) {
         accountEntity.setLastSignInAt(LocalDateTime.now());
         accountRepository.save(accountEntity);
+    }
+
+    public AccountEntity getCurrentUser() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AppException(ExceptionCode.UNAUTHORIZED_USER);
+        }
+
+        String signInId = SecurityContextHolder.getContext().getAuthentication().getName();
+        return accountRepository.findBySignInId(signInId)
+                .orElseThrow(() -> new AppException(ExceptionCode.NON_EXISTENT_USER));
     }
 }

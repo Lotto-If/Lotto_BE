@@ -8,7 +8,6 @@ import com.sw.lotto.account.model.UserLottoResponseDto;
 import com.sw.lotto.account.repository.UserLottoRepository;
 import com.sw.lotto.es.lotto.dto.LottoResponseDto;
 import com.sw.lotto.es.lotto.service.LottoService;
-import com.sw.lotto.global.common.service.CurrentUserService;
 import com.sw.lotto.global.exception.AppException;
 import com.sw.lotto.global.exception.ExceptionCode;
 import com.sw.lotto.mail.MailLogEntity;
@@ -19,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,10 +26,10 @@ public class UserLottoService {
     private final UserLottoRepository userLottoRepository;
     private final MailLogService mailLogService;
     private final LottoService lottoService;
-    private final CurrentUserService currentUserService;
+    private final AccountService accountService;
 
     public UserLottoResponseDto saveUserLotto(UserLottoRequestDto userLottoRequestDto) {
-        AccountEntity account = currentUserService.getCurrentUser();
+        AccountEntity account = accountService.getCurrentUser();
         Integer latestRound = lottoService.getLatestLotto().getRound();
 
         if (userLottoRequestDto.getRound() < latestRound) {
@@ -58,13 +56,13 @@ public class UserLottoService {
     }
 
     public List<UserLottoResponseDto> getUserLottoByAccount() {
-        AccountEntity account = currentUserService.getCurrentUser();
+        AccountEntity account = accountService.getCurrentUser();
         List<UserLottoEntity> userLottoList = userLottoRepository.findAllByAccount(account);
         return userLottoList.stream().map(UserLottoResponseDto::fromUserLottoEntity).toList();
     }
 
     public UserLottoResponseDto getUserLottoByRound(Integer round) {
-        AccountEntity account = currentUserService.getCurrentUser();
+        AccountEntity account = accountService.getCurrentUser();
 
         UserLottoEntity userLottoEntity = userLottoRepository.findByAccountAndRound(account, round)
                 .orElseThrow(() -> new AppException(ExceptionCode.NON_EXISTENT_LOTTO));

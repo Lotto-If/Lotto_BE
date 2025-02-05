@@ -1,6 +1,7 @@
 package com.sw.lotto.bucketlist.service;
 
 import com.sw.lotto.account.domain.AccountEntity;
+import com.sw.lotto.account.service.AccountService;
 import com.sw.lotto.bucketlist.domain.BucketListEntity;
 import com.sw.lotto.bucketlist.domain.CartItemEntity;
 import com.sw.lotto.bucketlist.dto.BucketListResponseDto;
@@ -9,7 +10,6 @@ import com.sw.lotto.bucketlist.repository.BucketListRepository;
 import com.sw.lotto.bucketlist.repository.CartItemRepository;
 import com.sw.lotto.es.lotto.dto.LottoResponseDto;
 import com.sw.lotto.es.lotto.service.LottoService;
-import com.sw.lotto.global.common.service.CurrentUserService;
 import com.sw.lotto.global.exception.AppException;
 import com.sw.lotto.global.exception.ExceptionCode;
 import com.sw.lotto.product.service.ProductService;
@@ -27,12 +27,12 @@ public class BucketListService {
     private final BucketListRepository bucketListRepository;
     private final CartItemRepository cartItemRepository;
     private final LottoService lottoService;
-    private final CurrentUserService currentUserService;
     private final ProductService productService;
+    private final AccountService accountService;
 
 
     public BucketListResponseDto getBucketListForCurrentUser(Boolean isLotto) {
-        AccountEntity currentUser = currentUserService.getCurrentUser();
+        AccountEntity currentUser = accountService.getCurrentUser();
         BucketListEntity bucketList = getOrCreateBucketList(currentUser, isLotto);
 
         List<CartItemEntity> cartItems = cartItemRepository.findByBucketList(bucketList);
@@ -54,7 +54,7 @@ public class BucketListService {
 
     @Transactional
     public Long addItemToBucketList(Boolean isLotto, CartItemRequestDto cartItemRequestDto) {
-        AccountEntity currentUser = currentUserService.getCurrentUser();
+        AccountEntity currentUser = accountService.getCurrentUser();
         BucketListEntity bucketList = getOrCreateBucketList(currentUser, isLotto);
         Long price = productService.getProductDetail(
                 cartItemRequestDto.getTargetId(),
