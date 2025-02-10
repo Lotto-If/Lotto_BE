@@ -6,6 +6,7 @@ import com.sw.lotto.account.repository.AccountRepository;
 import com.sw.lotto.global.exception.AppException;
 import com.sw.lotto.global.exception.ExceptionCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +39,7 @@ public class AccountService {
     }
 
     public AccountEntity getCurrentUser() {
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new AppException(ExceptionCode.UNAUTHORIZED_USER);
